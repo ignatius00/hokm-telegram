@@ -9,6 +9,7 @@ interface CardProps {
   selected?: boolean;
   playable?: boolean;
   small?: boolean;
+  isTrump?: boolean;
   onClick?: () => void;
   className?: string;
   style?: React.CSSProperties;
@@ -20,6 +21,7 @@ export const Card: React.FC<CardProps> = ({
   selected = false,
   playable = true,
   small = false,
+  isTrump = false,
   onClick,
   className = "",
   style,
@@ -48,6 +50,7 @@ export const Card: React.FC<CardProps> = ({
         ${small ? styles.small : ""}
         ${selected ? styles.selected : ""}
         ${!playable ? styles.disabled : ""}
+        ${isTrump && !selected ? styles.trumpGlow : ""}
         ${className}
       `}
       style={style}

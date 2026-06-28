@@ -4,9 +4,12 @@
   border-radius: var(--radius-md);
   position: relative;
   flex-shrink: 0;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   cursor: pointer;
-  box-shadow: 0 2px 8px var(--card-shadow);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .card.small {
@@ -17,25 +20,53 @@
 /* ── Face-up card ────────────────────────────────────────────────────────── */
 
 .cardFace {
-  background: var(--card-bg);
+  background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 50%, #e8e8e8 100%);
   padding: 4px;
+}
+
+/* Hover lift */
+.cardFace:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.35),
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .cardFace:active {
   transform: scale(0.95);
 }
 
+/* Selected — gold glow, lifted */
 .selected {
-  transform: translateY(-14px) !important;
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
-  outline: 2px solid var(--accent-gold);
-  outline-offset: 1px;
+  transform: translateY(-16px) !important;
+  box-shadow:
+    0 8px 24px var(--card-glow-gold),
+    0 0 0 2px var(--accent-gold),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
+/* Disabled (shouldn't be used for trick_taking anymore) */
 .disabled {
   opacity: 0.4;
   cursor: not-allowed;
   filter: grayscale(0.6);
+}
+
+/* Trump suit glow — subtle red aura on trump cards */
+.trumpGlow {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 0 12px var(--card-glow-trump),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.trumpGlow:hover {
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.35),
+    0 0 18px var(--card-glow-trump),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* ── Corner rank + suit ──────────────────────────────────────────────────── */
@@ -60,12 +91,12 @@
 
 .rank {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   font-family: var(--font-family);
 }
 
 .small .rank {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .suitSmall {
@@ -75,7 +106,7 @@
 }
 
 .small .suitSmall {
-  font-size: 9px;
+  font-size: 10px;
 }
 
 /* ── Center suit ─────────────────────────────────────────────────────────── */
@@ -90,6 +121,7 @@
 
 .suitLarge {
   font-size: 30px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
 }
 
 .small .suitLarge {
@@ -99,9 +131,12 @@
 /* ── Card back ───────────────────────────────────────────────────────────── */
 
 .cardBack {
-  background: var(--card-back);
+  background: linear-gradient(145deg, #1e3a5f 0%, #152d4a 100%);
   border: 2px solid var(--card-back-accent);
   overflow: hidden;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .backPattern {
@@ -111,8 +146,8 @@
     45deg,
     transparent,
     transparent 4px,
-    rgba(255, 255, 255, 0.05) 4px,
-    rgba(255, 255, 255, 0.05) 8px
+    rgba(255, 255, 255, 0.04) 4px,
+    rgba(255, 255, 255, 0.04) 8px
   );
   display: flex;
   align-items: center;
@@ -123,7 +158,7 @@
 .backSymbol {
   font-size: 26px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.12);
   font-family: var(--font-family);
 }
 

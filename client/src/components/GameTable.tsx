@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { SanitizedGameState, Card as CardType, PlayerIndex, Suit, Rank } from "../types";
 import { SUIT_SYMBOLS } from "../types";
 import { Card } from "./Card";
@@ -17,12 +17,11 @@ const RANK_VALUES: Record<Rank, number> = {
   "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "A": 14,
 };
 
-// Alternating black → red → black → red
 const SUIT_ORDER: Record<Suit, number> = {
-  spades: 0,    // black
-  hearts: 1,    // red
-  clubs: 2,     // black
-  diamonds: 3,  // red
+  spades: 0,
+  hearts: 1,
+  clubs: 2,
+  diamonds: 3,
 };
 
 function sortHand(hand: CardType[]): CardType[] {
@@ -70,6 +69,7 @@ export const GameTable: React.FC<GameTableProps> = ({
 }) => {
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [showScores, setShowScores] = useState(false);
+  const [trickWinMsg, setTrickWinMsg] = useState<string | null>(null);
 
   const myIndex = game.yourPlayerIndex;
   const oppIndex = (1 - myIndex) as PlayerIndex;
@@ -85,6 +85,21 @@ export const GameTable: React.FC<GameTableProps> = ({
         return RANK_VALUES[a.card.rank] - RANK_VALUES[b.card.rank];
       });
   }, [game.yourHand]);
+
+  // Trick win message
+  const [prevTrickCount, setPrevTrickCount] = useState(game.trickHistory.length);
+  useEffect(() => {
+    if (game.trickHistory.length > prevTrickCount) {
+      const lastTrick = game.trickHistory[game.trickHistory.length - 1];
+      if (lastTrick.winner === myIndex) {
+        setTrickWinMsg("دستو بردی! 🎉");
+      } else {
+        setTrickWinMsg("حریف برد 😔");
+      }
+      setTimeout(() => setTrickWinMsg(null), 1500);
+    }
+    setPrevTrickCount(game.trickHistory.length);
+  }, [game.trickHistory.length, game.trickHistory, myIndex, prevTrickCount]);
 
   // ── Card selection for discarding ─────────────────────────────────────
 
@@ -120,16 +135,14 @@ export const GameTable: React.FC<GameTableProps> = ({
       else if (trick.leader === 1 && trick.player2Card)
         leadSuit = trick.player2Card.suit;
 
-      // First card of trick — anything goes
       if (!leadSuit) return true;
 
-      // Must follow suit if possible
       const hasLedSuit = sortedEntries.some((e) => e.card.suit === leadSuit);
       if (hasLedSuit) return card.suit === leadSuit;
 
       return true;
     },
-    [game]
+    [game, isMyTurn, sortedEntries]
   );
 
   // ── Phase-specific status text ───────────────────────────────────────
@@ -157,21 +170,36 @@ export const GameTable: React.FC<GameTableProps> = ({
 
   return (
     <div className={styles.table}>
-      {/* ── Top: Opponent hand ──────────────────────────────────────── */}
+      {/* ── Top: Opponent area ──────────────────────────────────────── */}
       <div className={styles.opponentArea}>
         <div className={styles.playerInfo}>
           <span className={styles.playerTag}>
-            {myIndex === 0 ? "بازیکن ۲" : "بازیکن ۱"}
+            {oppIndex === 0 ? "بازیکن ۱" : "بازیکن ۲"}
           </span>
           {!isMyTurn && game.phase === "trick_taking" && (
             <span className={styles.turnDot} />
           )}
         </div>
-        <div className={styles.handRow}>
-          {Array.from({ length: game.opponentHandCount }).map((_, i) => (
-            <Card key={i} faceDown small className={styles.oppCard} />
+        {/* Stacked opponent hand */}
+        <div className={styles.oppHand}>
+          {Array.from({ length: Math.min(game.opponentHandCount, 5) }).map((_, i) => (
+            <Card
+              key={i}
+              faceDown
+              small
+              className={styles.cardStack}
+              style={{ left: `${i * 6}px`, zIndex: i }}
+            />
           ))}
         </div>
+        {/* Thinking dots when opponent is acting */}
+        {!isMyTurn && (game.phase === "trick_taking" || game.phase === "drawing" || game.phase === "final_pick") && (
+          <div className={styles.thinking}>
+            <div className={styles.thinkingDot} />
+            <div className={styles.thinkingDot} />
+            <div className={styles.thinkingDot} />
+          </div>
+        )}
       </div>
 
       {/* ── Center: Trick area ──────────────────────────────────────── */}
@@ -183,6 +211,13 @@ export const GameTable: React.FC<GameTableProps> = ({
         yourPlayerIndex={myIndex}
         trickHistoryCount={game.trickHistory.length}
       />
+
+      {/* ── Trick win overlay ───────────────────────────────────────── */}
+      {trickWinMsg && (
+        <div className={styles.trickWinOverlay}>
+          <span className={styles.trickWinText}>{trickWinMsg}</span>
+        </div>
+      )}
 
       {/* ── Status bar ──────────────────────────────────────────────── */}
       <div className={styles.statusBar}>
@@ -196,21 +231,22 @@ export const GameTable: React.FC<GameTableProps> = ({
       </div>
 
       {/* ── Bottom: Your hand (2 rows) ─────────────────────────────── */}
-      <div className={styles.myArea}>
+      <div className={`${styles.myArea} ${isMyTurn ? styles.myAreaActive : ""}`}>
         <div className={styles.handGrid}>
           {(() => {
-            // Split into 2 rows: top row gets ceil(n/2) cards, bottom gets the rest
             const mid = Math.ceil(sortedEntries.length / 2);
             const topRow = sortedEntries.slice(0, mid);
             const bottomRow = sortedEntries.slice(mid);
 
             const renderCard = ({ card, originalIndex }: { card: CardType; originalIndex: number }) => {
               const isSelected = selectedIndices.includes(originalIndex);
+              const isTrumpCard = game.trumpSuit !== null && card.suit === game.trumpSuit;
               return (
                 <Card
                   key={`${card.rank}-${card.suit}-${originalIndex}`}
                   card={card}
                   selected={isSelected}
+                  isTrump={isTrumpCard}
                   playable={
                     game.phase === "discarding"
                       ? true
@@ -270,7 +306,7 @@ export const GameTable: React.FC<GameTableProps> = ({
         <TrumpSelector onSelect={(suit) => onChooseTrump(suit)} />
       )}
 
-      {(game.phase === "drawing" || forcedCard) && (
+      {game.phase === "drawing" && (
         <DrawingPhase
           drawnCard={drawnCard}
           forcedCard={forcedCard}
