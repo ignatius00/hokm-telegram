@@ -26,6 +26,7 @@ export interface GameHookState {
   countdown: number | null;
   game: SanitizedGameState | null;
   drawnCard: Card | null;
+  forcedCard: Card | null;
   finalCards: [Card, Card] | null;
   lastTrickResult: { winner: PlayerIndex; score: [number, number] } | null;
   lastRoundResult: {
@@ -56,6 +57,7 @@ export function useGameSocket() {
     countdown: null,
     game: null,
     drawnCard: null,
+    forcedCard: null,
     finalCards: null,
     lastTrickResult: null,
     lastRoundResult: null,
@@ -149,6 +151,7 @@ export function useGameSocket() {
       countdown: null,
       game: null,
       drawnCard: null,
+    forcedCard: null,
       finalCards: null,
       lastTrickResult: null,
       lastRoundResult: null,
@@ -254,6 +257,7 @@ export function useGameSocket() {
           game: msg.state,
           error: null,
           drawnCard: null,
+    forcedCard: null,
           finalCards: null,
           lastTrickResult: null,
           lastRoundResult: null,
@@ -273,8 +277,19 @@ export function useGameSocket() {
         setState((s) => ({
           ...s,
           drawnCard: msg.card,
+          forcedCard: null,
           isOpponentDrawing: false,
         }));
+        break;
+
+      case "forced_card":
+        setState((s) => ({ ...s, forcedCard: msg.card, drawnCard: null }));
+        // Auto-clear after 3 seconds
+        setTimeout(() => {
+          setState((s) =>
+            s.forcedCard === msg.card ? { ...s, forcedCard: null } : s
+          );
+        }, 3000);
         break;
 
       case "final_cards":
@@ -312,6 +327,7 @@ export function useGameSocket() {
           ...s,
           game: msg.state,
           drawnCard: null,
+    forcedCard: null,
           finalCards: null,
           lastTrickResult: null,
           lastRoundResult: null,

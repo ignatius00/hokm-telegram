@@ -13,6 +13,7 @@ import styles from "./GameTable.module.css";
 interface GameTableProps {
   game: SanitizedGameState;
   drawnCard: CardType | null;
+  forcedCard: CardType | null;
   finalCards: [CardType, CardType] | null;
   gameOver: { matchWinner: PlayerIndex; finalScore: [number, number] } | null;
   lastRoundResult: {
@@ -32,6 +33,7 @@ interface GameTableProps {
 export const GameTable: React.FC<GameTableProps> = ({
   game,
   drawnCard,
+  forcedCard,
   finalCards,
   gameOver,
   lastRoundResult,
@@ -227,9 +229,10 @@ export const GameTable: React.FC<GameTableProps> = ({
         <TrumpSelector onSelect={(suit) => onChooseTrump(suit)} />
       )}
 
-      {game.phase === "drawing" && (
+      {(game.phase === "drawing" || forcedCard) && (
         <DrawingPhase
           drawnCard={drawnCard}
+          forcedCard={forcedCard}
           isYourTurn={isMyTurn}
           stackCount={game.stackCount}
           isOpponentDrawing={isOpponentDrawing}

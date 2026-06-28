@@ -79,7 +79,7 @@ export class GameSession extends EventEmitter {
   constructor(player1Name: string, player2Name: string) {
     super();
     this.playerNames = [player1Name, player2Name];
-    this.turnTimeoutMs = parseInt(process.env.TURN_TIMEOUT ?? "30", 10) * 1000;
+    this.turnTimeoutMs = parseInt(process.env.TURN_TIMEOUT ?? "60", 10) * 1000;
     this.state = startNewRound(player1Name, player2Name, 0);
   }
 

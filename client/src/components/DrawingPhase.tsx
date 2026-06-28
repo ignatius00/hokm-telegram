@@ -5,6 +5,7 @@ import styles from "./DrawingPhase.module.css";
 
 interface DrawingPhaseProps {
   drawnCard: CardType | null;
+  forcedCard: CardType | null;
   isYourTurn: boolean;
   stackCount: number;
   isOpponentDrawing: boolean;
@@ -14,12 +15,28 @@ interface DrawingPhaseProps {
 
 export const DrawingPhase: React.FC<DrawingPhaseProps> = ({
   drawnCard,
+  forcedCard,
   isYourTurn,
   stackCount,
   isOpponentDrawing,
   onKeep,
   onPass,
 }) => {
+  // Show forced card when player passes
+  if (forcedCard) {
+    return (
+      <div className={styles.overlay}>
+        <div className={styles.panel}>
+          <p className={styles.forcedLabel}>کارت اجباری:</p>
+          <div className={styles.cardRow}>
+            <Card card={forcedCard} />
+          </div>
+          <p className={styles.forcedHint}>این کارت به دست شما اضافه شد</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isYourTurn && isOpponentDrawing) {
     return (
       <div className={styles.overlay}>

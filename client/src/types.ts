@@ -97,6 +97,11 @@ export interface FinalCardsMsg {
   cards: [Card, Card];
 }
 
+export interface ForcedCardMsg {
+  type: "forced_card";
+  card: Card;
+}
+
 export interface OpponentDrewMsg {
   type: "opponent_drew";
 }
@@ -157,6 +162,7 @@ export type ServerMessage =
   | YourTurnMsg
   | DrawnCardMsg
   | FinalCardsMsg
+  | ForcedCardMsg
   | OpponentDrewMsg
   | CardPlayedMsg
   | TrickResultMsg

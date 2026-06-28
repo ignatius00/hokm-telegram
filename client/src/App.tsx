@@ -47,6 +47,7 @@ const App: React.FC = () => {
     countdown,
     game,
     drawnCard,
+    forcedCard,
     finalCards,
     lastTrickResult,
     lastRoundResult,
@@ -88,6 +89,7 @@ const App: React.FC = () => {
         <GameTable
           game={game}
           drawnCard={drawnCard}
+          forcedCard={forcedCard}
           finalCards={finalCards}
           gameOver={gameOver}
           lastRoundResult={lastRoundResult}

@@ -27,6 +27,7 @@ import {
   msgFinalCards,
   msgOpponentDrew,
   msgCardPlayed,
+  msgForcedCard,
   msgTrickResult,
   msgRoundResult,
   msgNewRound,
@@ -315,7 +316,16 @@ function handleMessage(ws: WebSocket, raw: string): void {
 
       case "draw_choice": {
         if (!isYourTurn) throw new Error("Not your turn");
+        const handBefore = session.getState().players[playerIndex].hand.map(c => `${c.rank}-${c.suit}`);
         session.drawChoice(msg.action);
+        // If player passed, send them the forced card
+        if (msg.action === "pass") {
+          const handAfter = session.getState().players[playerIndex].hand;
+          const forcedCard = handAfter.find(c => !handBefore.includes(`${c.rank}-${c.suit}`));
+          if (forcedCard) {
+            sendTo(ws, msgForcedCard(forcedCard));
+          }
+        }
         // Notify opponent that a card was drawn
         const room3 = getRoom(roomCode)!;
         const oppWs3 = room3.players[(1 - playerIndex) as PlayerIndex].ws;
