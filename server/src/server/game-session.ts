@@ -16,6 +16,7 @@ import {
   playCard as enginePlayCard,
   sanitizeState,
   startDrawTurn,
+  drawCards,
 } from "../engine";
 
 // ── Event payloads ─────────────────────────────────────────────────────────
@@ -238,6 +239,15 @@ export class GameSession extends EventEmitter {
   }
 
   private startFinalPickInternal(): void {
+    // Pre-draw the 2 final cards so the client can see them
+    if (this.state.stack.length >= 2 && !this.state.finalDrawnCards) {
+      const { drawn, remaining } = drawCards(this.state.stack, 2);
+      this.state = {
+        ...this.state,
+        stack: remaining,
+        finalDrawnCards: [drawn[0], drawn[1]],
+      };
+    }
     // Hakem goes first — the engine already sets activePlayer to hakem
     this.emitTurnChange(this.state.activePlayer);
   }
