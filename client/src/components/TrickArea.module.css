@@ -1,0 +1,131 @@
+.area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  position: relative;
+}
+
+/* ── Trump badge ─────────────────────────────────────────────────────────── */
+
+.trumpBadge {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-xl);
+  z-index: 5;
+}
+
+.trumpLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.trumpSuit {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ── Play area ───────────────────────────────────────────────────────────── */
+
+.playArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.oppSlot,
+.mySlot {
+  display: flex;
+  justify-content: center;
+  min-height: 62px;
+  width: 100%;
+}
+
+.playedCard {
+  animation: cardAppear 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.centerInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trickCount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.trickCount span:first-child {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.trickLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── Scores ──────────────────────────────────────────────────────────────── */
+
+.scores {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-xl);
+}
+
+.scoreItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scoreLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.scoreValue {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent-gold);
+}
+
+.scoreDivider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.15);
+}

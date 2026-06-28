@@ -1,0 +1,132 @@
+.card {
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: var(--radius-md);
+  position: relative;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+
+.card.small {
+  width: var(--card-w-sm);
+  height: var(--card-h-sm);
+}
+
+/* ── Face-up card ────────────────────────────────────────────────────────── */
+
+.cardFace {
+  background: var(--card-bg);
+  padding: 3px;
+}
+
+.cardFace:active {
+  transform: scale(0.95);
+}
+
+.selected {
+  transform: translateY(-12px) !important;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 1px;
+}
+
+.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+/* ── Corner rank + suit ──────────────────────────────────────────────────── */
+
+.corner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  position: absolute;
+  top: 3px;
+  right: 4px;
+}
+
+.cornerBottom {
+  top: auto;
+  right: auto;
+  bottom: 3px;
+  left: 4px;
+  transform: rotate(180deg);
+}
+
+.rank {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-family);
+}
+
+.small .rank {
+  font-size: 10px;
+}
+
+.suitSmall {
+  font-size: 10px;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+.small .suitSmall {
+  font-size: 8px;
+}
+
+/* ── Center suit ─────────────────────────────────────────────────────────── */
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.suitLarge {
+  font-size: 26px;
+}
+
+.small .suitLarge {
+  font-size: 18px;
+}
+
+/* ── Card back ───────────────────────────────────────────────────────────── */
+
+.cardBack {
+  background: var(--card-back);
+  border: 2px solid var(--card-back-accent);
+  overflow: hidden;
+}
+
+.backPattern {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(255, 255, 255, 0.05) 4px,
+    rgba(255, 255, 255, 0.05) 8px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+.backSymbol {
+  font-size: 24px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.15);
+  font-family: var(--font-family);
+}
+
+.small .backSymbol {
+  font-size: 16px;
+}

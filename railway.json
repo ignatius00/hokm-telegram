@@ -1,0 +1,16 @@
+{
+  "builder": {
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "healthcheckPath": "/health",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  },
+  "env": {
+    "PORT": {
+      "variable": "PORT"
+    },
+    "NODE_ENV": "production"
+  }
+}

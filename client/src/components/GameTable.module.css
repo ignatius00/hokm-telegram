@@ -1,0 +1,197 @@
+.table {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: radial-gradient(ellipse at center, var(--bg-felt-light) 0%, var(--bg-felt-dark) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Opponent area (top) ─────────────────────────────────────────────────── */
+
+.opponentArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px 4px;
+  flex-shrink: 0;
+}
+
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.playerTag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.turnDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── Hand rows ───────────────────────────────────────────────────────────── */
+
+.handRow {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0 8px;
+  gap: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.oppCard {
+  margin-inline-start: -12px;
+}
+
+.oppCard:first-child {
+  margin-inline-start: 0;
+}
+
+.myCard {
+  margin-inline-start: -14px;
+  transition: transform var(--transition-fast), margin var(--transition-fast);
+}
+
+.myCard:first-child {
+  margin-inline-start: 0;
+}
+
+/* ── My area (bottom) ───────────────────────────────────────────────────── */
+
+.myArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px 12px;
+  flex-shrink: 0;
+}
+
+/* ── Status bar ──────────────────────────────────────────────────────────── */
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.statusText {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  flex: 1;
+}
+
+.scoresBtn {
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-family);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.stackBadge {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Discard bar ─────────────────────────────────────────────────────────── */
+
+.discardBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  bottom: 110px;
+  left: 0;
+  right: 0;
+  animation: slideUp 200ms ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.discardCount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.discardBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-blue);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.discardBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.discardBtn:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+/* ── Error toast ─────────────────────────────────────────────────────────── */
+
+.errorToast {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  z-index: 50;
+  animation: slideDown 200ms ease;
+  max-width: 90%;
+  text-align: center;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

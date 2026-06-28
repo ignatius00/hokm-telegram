@@ -1,0 +1,15 @@
+.app {
+  height: 100%;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ensure the app fills the Telegram WebView */
+@media (max-width: 480px) {
+  .app {
+    max-width: 100%;
+  }
+}

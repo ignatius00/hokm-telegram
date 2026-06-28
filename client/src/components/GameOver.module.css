@@ -1,0 +1,112 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  animation: fadeIn 300ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.panel {
+  background: var(--bg-felt-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  width: calc(100% - 40px);
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: bounceIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.trophy {
+  font-size: 64px;
+  line-height: 1;
+  animation: bounceIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.scoreBoard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--bg-surface-raised);
+  border-radius: var(--radius-lg);
+}
+
+.scoreRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.scoreLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.scoreVal {
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.vs {
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+.roundDetail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.roundDetailLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.playAgainBtn {
+  padding: 14px 32px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-blue);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  margin-top: 8px;
+}
+
+.playAgainBtn:active {
+  transform: scale(0.96);
+}
