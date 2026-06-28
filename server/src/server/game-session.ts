@@ -83,7 +83,8 @@ export class GameSession extends EventEmitter {
     this.playerNames = [player1Name, player2Name];
     this.turnTimeoutMs = parseInt(process.env.TURN_TIMEOUT ?? "150", 10) * 1000;
     this.cardChoosingTimeoutMs = parseInt(process.env.CARD_CHOOSING_TIMEOUT ?? "30", 10) * 1000;
-    this.state = startNewRound(player1Name, player2Name, 0);
+    const firstHakem: PlayerIndex = Math.random() < 0.5 ? 0 : 1;
+    this.state = startNewRound(player1Name, player2Name, firstHakem);
   }
 
   // ── Public API ──────────────────────────────────────────────────────────

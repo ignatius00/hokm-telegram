@@ -56,7 +56,7 @@ export const GameOver: React.FC<GameOverProps> = ({
 
         {lastRoundResult && (
           <div className={styles.roundDetail}>
-            <span className={styles.roundDetailLabel}>ترفندهای آخرین دور:</span>
+            <span className={styles.roundDetailLabel}>دست‌های آخرین دور:</span>
             <span>
               {lastRoundResult.tricks[yourPlayerIndex]} - {lastRoundResult.tricks[(1 - yourPlayerIndex) as PlayerIndex]}
             </span>

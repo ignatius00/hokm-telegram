@@ -96,7 +96,7 @@ export const TrickArea: React.FC<TrickAreaProps> = ({
             {/* Trick count */}
             <div className={styles.statItem}>
               <span className={styles.statValue}>{trickHistoryCount}</span>
-              <span className={styles.statLabel}>ترفند</span>
+              <span className={styles.statLabel}>دست</span>
             </div>
             <div className={styles.statDivider} />
             {/* Opponent score */}
