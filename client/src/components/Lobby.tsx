@@ -149,7 +149,7 @@ export const Lobby: React.FC<LobbyProps> = ({
           <button
             className={styles.btnPrimary}
             onClick={handleJoin}
-            disabled={joinCode.trim().length !== 6 || connectionState !== "connected"}
+            disabled={joinCode.trim().length !== 6}
           >
             ✅ پیوستن
           </button>
