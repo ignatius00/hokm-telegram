@@ -1,36 +1,43 @@
 # ── Stage 1: Build client ─────────────────────────────────────────────────
 FROM node:20-alpine AS client-build
-WORKDIR /app/client
-COPY client/package*.json ./
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY client/package.json ./client/
+COPY server/package.json ./server/
 RUN npm ci
-COPY client/ ./
+COPY client/ ./client/
+WORKDIR /app/client
 RUN npm run build
 
 # ── Stage 2: Build server ─────────────────────────────────────────────────
 FROM node:20-alpine AS server-build
-WORKDIR /app/server
-COPY server/package*.json ./
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY client/package.json ./client/
+COPY server/package.json ./server/
 RUN npm ci
-COPY server/ ./
+COPY server/ ./server/
+WORKDIR /app/server
 RUN npm run build
 
 # ── Stage 3: Production ───────────────────────────────────────────────────
 FROM node:20-alpine
 WORKDIR /app
 
-# Copy server production artifacts
-COPY server/package*.json ./server/
-WORKDIR /app/server
+# Copy the whole workspace so node_modules resolution works
+COPY package.json package-lock.json ./
+COPY client/package.json ./client/
+COPY server/package.json ./server/
 RUN npm ci --omit=dev
-COPY --from=server-build /app/server/dist ./dist
 
-# Copy built client
-COPY --from=client-build /app/client/dist /app/client/dist
+# Copy built artifacts
+COPY --from=server-build /app/server/dist ./server/dist
+COPY --from=client-build /app/client/dist ./client/dist
 
 # Environment
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
-
+WORKDIR /app/server
 CMD ["node", "dist/main.js"]
