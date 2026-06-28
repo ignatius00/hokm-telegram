@@ -195,41 +195,52 @@ export const GameTable: React.FC<GameTableProps> = ({
         </span>
       </div>
 
-      {/* ── Bottom: Your hand ───────────────────────────────────────── */}
+      {/* ── Bottom: Your hand (2 rows) ─────────────────────────────── */}
       <div className={styles.myArea}>
-        <div className={styles.handRow}>
-          {sortedEntries.map(({ card, originalIndex }, i) => {
-            const isSelected = selectedIndices.includes(originalIndex);
-            const playable =
-              game.phase === "trick_taking"
-                ? isCardPlayable(card, originalIndex)
-                : game.phase === "discarding"
-                ? true
-                : false;
+        <div className={styles.handGrid}>
+          {(() => {
+            // Split into 2 rows: top row gets ceil(n/2) cards, bottom gets the rest
+            const mid = Math.ceil(sortedEntries.length / 2);
+            const topRow = sortedEntries.slice(0, mid);
+            const bottomRow = sortedEntries.slice(mid);
+
+            const renderCard = ({ card, originalIndex }: { card: CardType; originalIndex: number }) => {
+              const isSelected = selectedIndices.includes(originalIndex);
+              return (
+                <Card
+                  key={`${card.rank}-${card.suit}-${originalIndex}`}
+                  card={card}
+                  selected={isSelected}
+                  playable={
+                    game.phase === "discarding"
+                      ? true
+                      : game.phase === "trick_taking"
+                      ? true
+                      : false
+                  }
+                  onClick={() => {
+                    if (game.phase === "discarding") {
+                      toggleSelect(originalIndex);
+                    } else if (game.phase === "trick_taking" && isMyTurn && isCardPlayable(card, originalIndex)) {
+                      onPlayCard(originalIndex);
+                    }
+                  }}
+                  className={styles.myCard}
+                />
+              );
+            };
 
             return (
-              <Card
-                key={`${card.rank}-${card.suit}-${originalIndex}`}
-                card={card}
-                selected={isSelected}
-                playable={
-                  game.phase === "discarding"
-                    ? true
-                    : game.phase === "trick_taking"
-                    ? true
-                    : false
-                }
-                onClick={() => {
-                  if (game.phase === "discarding") {
-                    toggleSelect(originalIndex);
-                  } else if (game.phase === "trick_taking" && isMyTurn && isCardPlayable(card, originalIndex)) {
-                    onPlayCard(originalIndex);
-                  }
-                }}
-                className={styles.myCard}
-              />
+              <>
+                <div className={styles.handRowGrid}>
+                  {topRow.map(renderCard)}
+                </div>
+                <div className={styles.handRowGrid}>
+                  {bottomRow.map(renderCard)}
+                </div>
+              </>
             );
-          })}
+          })()}
         </div>
       </div>
 

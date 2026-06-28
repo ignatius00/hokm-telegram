@@ -44,10 +44,10 @@
   --font-family: "Vazirmatn", system-ui, -apple-system, sans-serif;
 
   /* Card dimensions */
-  --card-w: 55px;
-  --card-h: 80px;
-  --card-w-sm: 40px;
-  --card-h-sm: 58px;
+  --card-w: 60px;
+  --card-h: 88px;
+  --card-w-sm: 48px;
+  --card-h-sm: 70px;
 }
 
 *,
