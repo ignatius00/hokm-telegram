@@ -92,6 +92,7 @@ export class GameSession extends EventEmitter {
   }
 
   chooseTrump(suit: Suit): void {
+    this.clearTurnTimer();
     this.state = engineChooseTrump(this.state, suit);
     this.emitStateToBoth();
     // Discarding phase: both players discard in parallel, no turn_change needed
