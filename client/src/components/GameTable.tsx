@@ -182,17 +182,13 @@ export const GameTable: React.FC<GameTableProps> = ({
                   game.phase === "discarding"
                     ? true
                     : game.phase === "trick_taking"
-                    ? isMyTurn && playable
+                    ? true
                     : false
                 }
                 onClick={() => {
                   if (game.phase === "discarding") {
                     toggleSelect(i);
-                  } else if (
-                    game.phase === "trick_taking" &&
-                    isMyTurn &&
-                    playable
-                  ) {
+                  } else if (game.phase === "trick_taking" && isMyTurn && isCardPlayable(card, i)) {
                     onPlayCard(i);
                   }
                 }}

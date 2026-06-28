@@ -74,13 +74,15 @@ export class GameSession extends EventEmitter {
   private state: GameState;
   private turnTimer: NodeJS.Timeout | null = null;
   private turnTimeoutMs: number;
+  private cardChoosingTimeoutMs: number;
   private playerNames: [string, string];
   private _destroyed = false;
 
   constructor(player1Name: string, player2Name: string) {
     super();
     this.playerNames = [player1Name, player2Name];
-    this.turnTimeoutMs = parseInt(process.env.TURN_TIMEOUT ?? "60", 10) * 1000;
+    this.turnTimeoutMs = parseInt(process.env.TURN_TIMEOUT ?? "150", 10) * 1000;
+    this.cardChoosingTimeoutMs = parseInt(process.env.CARD_CHOOSING_TIMEOUT ?? "30", 10) * 1000;
     this.state = startNewRound(player1Name, player2Name, 0);
   }
 
@@ -272,11 +274,15 @@ export class GameSession extends EventEmitter {
     this.clearTurnTimer();
     if (this._destroyed) return;
 
+    // Use shorter timeout for card-choosing phases, longer for trick-taking
+    const isChoosingPhase = this.state.phase !== "trick_taking";
+    const timeoutMs = isChoosingPhase ? this.cardChoosingTimeoutMs : this.turnTimeoutMs;
+
     this.turnTimer = setTimeout(() => {
       if (this._destroyed) return;
       this.emit("timeout", { playerIndex });
       this.autoPlay(playerIndex);
-    }, this.turnTimeoutMs);
+    }, timeoutMs);
   }
 
   private clearTurnTimer(): void {
