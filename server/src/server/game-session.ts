@@ -134,7 +134,16 @@ export class GameSession extends EventEmitter {
       // Both picked, first trick starts with hakem
       this.emitTurnChange(this.state.activePlayer);
     } else if (this.state.phase === "final_pick") {
-      // Other player's turn to pick
+      // Other player's turn to pick — pre-draw their 2 cards
+      if (this.state.stack.length >= 2 && !this.state.finalDrawnCards) {
+        const { drawn, remaining } = drawCards(this.state.stack, 2);
+        this.state = {
+          ...this.state,
+          stack: remaining,
+          finalDrawnCards: [drawn[0], drawn[1]],
+        };
+        this.emitStateToBoth();
+      }
       this.emitTurnChange(this.state.activePlayer);
     }
   }
@@ -193,8 +202,13 @@ export class GameSession extends EventEmitter {
         setTimeout(() => this.startNewRoundInternal(), 2000);
       }
     } else {
-      // Round continues — winner leads next trick
-      this.emitTurnChange(this.state.activePlayer);
+      // Round continues — pause briefly so both players can see the completed trick
+      const nextPlayer = this.state.activePlayer;
+      setTimeout(() => {
+        if (!this._destroyed) {
+          this.emitTurnChange(nextPlayer);
+        }
+      }, 1500);
     }
   }
 

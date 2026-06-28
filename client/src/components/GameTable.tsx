@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import type { SanitizedGameState, Card as CardType, PlayerIndex, Suit } from "../types";
+import React, { useCallback, useMemo, useState } from "react";
+import type { SanitizedGameState, Card as CardType, PlayerIndex, Suit, Rank } from "../types";
 import { SUIT_SYMBOLS } from "../types";
 import { Card } from "./Card";
 import { TrickArea } from "./TrickArea";
@@ -9,6 +9,29 @@ import { FinalPick } from "./FinalPick";
 import { GameOver } from "./GameOver";
 import { Scores } from "./Scores";
 import styles from "./GameTable.module.css";
+
+// ── Hand sorting ──────────────────────────────────────────────────────────
+
+const RANK_VALUES: Record<Rank, number> = {
+  "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8,
+  "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "A": 14,
+};
+
+// Alternating black → red → black → red
+const SUIT_ORDER: Record<Suit, number> = {
+  spades: 0,    // black
+  hearts: 1,    // red
+  clubs: 2,     // black
+  diamonds: 3,  // red
+};
+
+function sortHand(hand: CardType[]): CardType[] {
+  return [...hand].sort((a, b) => {
+    const suitDiff = SUIT_ORDER[a.suit] - SUIT_ORDER[b.suit];
+    if (suitDiff !== 0) return suitDiff;
+    return RANK_VALUES[a.rank] - RANK_VALUES[b.rank];
+  });
+}
 
 interface GameTableProps {
   game: SanitizedGameState;
@@ -52,6 +75,17 @@ export const GameTable: React.FC<GameTableProps> = ({
   const oppIndex = (1 - myIndex) as PlayerIndex;
   const isMyTurn = game.isYourTurn;
 
+  // Sort hand by suit (black-red alternating) then by rank, keeping original indices
+  const sortedEntries = useMemo(() => {
+    return game.yourHand
+      .map((card, originalIndex) => ({ card, originalIndex }))
+      .sort((a, b) => {
+        const suitDiff = SUIT_ORDER[a.card.suit] - SUIT_ORDER[b.card.suit];
+        if (suitDiff !== 0) return suitDiff;
+        return RANK_VALUES[a.card.rank] - RANK_VALUES[b.card.rank];
+      });
+  }, [game.yourHand]);
+
   // ── Card selection for discarding ─────────────────────────────────────
 
   const toggleSelect = useCallback(
@@ -90,7 +124,7 @@ export const GameTable: React.FC<GameTableProps> = ({
       if (!leadSuit) return true;
 
       // Must follow suit if possible
-      const hasLedSuit = game.yourHand.some((c) => c.suit === leadSuit);
+      const hasLedSuit = sortedEntries.some((e) => e.card.suit === leadSuit);
       if (hasLedSuit) return card.suit === leadSuit;
 
       return true;
@@ -164,18 +198,18 @@ export const GameTable: React.FC<GameTableProps> = ({
       {/* ── Bottom: Your hand ───────────────────────────────────────── */}
       <div className={styles.myArea}>
         <div className={styles.handRow}>
-          {game.yourHand.map((card, i) => {
-            const isSelected = selectedIndices.includes(i);
+          {sortedEntries.map(({ card, originalIndex }, i) => {
+            const isSelected = selectedIndices.includes(originalIndex);
             const playable =
               game.phase === "trick_taking"
-                ? isCardPlayable(card, i)
+                ? isCardPlayable(card, originalIndex)
                 : game.phase === "discarding"
                 ? true
                 : false;
 
             return (
               <Card
-                key={`${card.rank}-${card.suit}-${i}`}
+                key={`${card.rank}-${card.suit}-${originalIndex}`}
                 card={card}
                 selected={isSelected}
                 playable={
@@ -187,9 +221,9 @@ export const GameTable: React.FC<GameTableProps> = ({
                 }
                 onClick={() => {
                   if (game.phase === "discarding") {
-                    toggleSelect(i);
-                  } else if (game.phase === "trick_taking" && isMyTurn && isCardPlayable(card, i)) {
-                    onPlayCard(i);
+                    toggleSelect(originalIndex);
+                  } else if (game.phase === "trick_taking" && isMyTurn && isCardPlayable(card, originalIndex)) {
+                    onPlayCard(originalIndex);
                   }
                 }}
                 className={styles.myCard}
