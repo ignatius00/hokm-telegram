@@ -48,6 +48,7 @@ export function compareCards(a: Card, b: Card): number {
 }
 
 // Determine trick winner
+// card1 = player 0's card, card2 = player 1's card
 export function evaluateTrick(
   card1: Card,
   card2: Card,
@@ -60,24 +61,24 @@ export function evaluateTrick(
 
   // Both trump → higher trump wins
   if (card1IsTrump && card2IsTrump) {
-    return compareCards(card1, card2) > 0 ? leader : (1 - leader) as 0 | 1;
+    return compareCards(card1, card2) > 0 ? 0 : 1;
   }
 
   // Only one is trump → trump wins
-  if (card1IsTrump) return leader;
-  if (card2IsTrump) return (1 - leader) as 0 | 1;
+  if (card1IsTrump) return 0;
+  if (card2IsTrump) return 1;
 
   // No trump → higher card of led suit wins
   const card1FollowsSuit = card1.suit === leadSuit;
   const card2FollowsSuit = card2.suit === leadSuit;
 
   if (card1FollowsSuit && card2FollowsSuit) {
-    return compareCards(card1, card2) > 0 ? leader : (1 - leader) as 0 | 1;
+    return compareCards(card1, card2) > 0 ? 0 : 1;
   }
 
   // If only one follows suit, that one wins
-  if (card1FollowsSuit) return leader;
-  if (card2FollowsSuit) return (1 - leader) as 0 | 1;
+  if (card1FollowsSuit) return 0;
+  if (card2FollowsSuit) return 1;
 
   // Neither follows suit and no trump → leader wins (shouldn't happen)
   return leader;
